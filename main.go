@@ -1,13 +1,17 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 )
 
 func main() {
-	name := flag.String("name", "Gopher", "Your name")
-	flag.Parse()
+	tasks := []Task{
+		{ID: 1, Name: "Learn Go", Done: false},
+		{ID: 2, Name: "Write cli", Done: false},
+	}
 
-	fmt.Printf("Hello, %s!\n", *name)
+	fmt.Println("Your tasks:")
+	for _, task := range tasks {
+		fmt.Printf("%d. %s [Done: %t]\n", task.ID, task.Name, task.Done)
+	}
 }
