@@ -15,6 +15,8 @@ func main() {
 
 	newTask := flag.String("add", "", "add a task")
 	doneTaskID := flag.String("done", "", "mark task as done")
+	showCompleted := flag.Bool("completed", false, "show completed tasks")
+	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
 	flag.Parse()
 
 	if *newTask != "" {
@@ -33,13 +35,14 @@ func main() {
 	}
 
 	fmt.Println("Your tasks:")
-	for _, task := range tasks {
-		status := "Not done"
-		if task.Done {
-			status = "Done"
-		}
-
-		fmt.Printf("%d. %s [%s]\n", task.ID, task.Name, status)
+	if *showCompleted && *showIncomplete {
+		fmt.Println("Please specify only one filter: --completed or --incomplete.")
+	} else if *showCompleted {
+		displayTasks(tasks, &[]bool{true}[0])
+	} else if *showIncomplete {
+		displayTasks(tasks, &[]bool{false}[0])
+	} else {
+		displayTasks(tasks, nil)
 	}
 }
 
@@ -75,4 +78,23 @@ func loadTasks() []Task {
 	var tasks []Task
 	_ = json.Unmarshal(file, &tasks)
 	return tasks
+}
+
+func displayTasks(tasks []Task, filter *bool) {
+	for _, task := range tasks {
+		if filter != nil {
+			if *filter && !task.Done {
+				continue
+			}
+			if !*filter && task.Done {
+				continue
+			}
+		}
+		status := "Not done"
+		if task.Done {
+			status = "Done"
+		}
+
+		fmt.Printf("%d. %s [%s]\n", task.ID, task.Name, status)
+	}
 }
