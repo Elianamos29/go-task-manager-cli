@@ -27,21 +27,21 @@ func main() {
 
 	if *doneTaskID != "" {
 		id, err := strconv.Atoi(*doneTaskID)
-		if err == nil {
+		if err != nil {
+			fmt.Println("invalid task ID:", *doneTaskID)
+		} else {
 			markAsDone(&tasks, id)
 			saveTasks(tasks)
-		} else {
-			fmt.Println("Invalid task id")
 		}
 	}
 
 	if *deleteTaskID != "" {
 		id, err := strconv.Atoi(*deleteTaskID)
-		if err == nil {
+		if err != nil {
+			fmt.Println("invalid task ID:", *deleteTaskID)
+		} else {
 			deleteTask(&tasks, id)
 			saveTasks(tasks)
-		} else {
-			fmt.Println("invalid task id")
 		}
 	}
 
