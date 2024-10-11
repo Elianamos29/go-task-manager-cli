@@ -13,10 +13,5 @@
   "id": 3,
   "name": "a new one",
   "done": true
- },
- {
-  "id": 4,
-  "name": "another one",
-  "done": false
  }
 ]

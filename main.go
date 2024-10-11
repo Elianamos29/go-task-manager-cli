@@ -14,6 +14,7 @@ func main() {
 	tasks := loadTasks()
 
 	newTask := flag.String("add", "", "add a task")
+	deleteTaskID := flag.String("delete", "", "delete a task")
 	doneTaskID := flag.String("done", "", "mark task as done")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
 	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
@@ -34,6 +35,16 @@ func main() {
 		}
 	}
 
+	if *deleteTaskID != "" {
+		id, err := strconv.Atoi(*deleteTaskID)
+		if err == nil {
+			deleteTask(&tasks, id)
+			saveTasks(tasks)
+		} else {
+			fmt.Println("invalid task id")
+		}
+	}
+
 	fmt.Println("Your tasks:")
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
@@ -50,6 +61,18 @@ func addTask(tasks *[]Task, name string) {
 	newID := len(*tasks) + 1
 	*tasks = append(*tasks, Task{ID: newID, Name: name, Done: false})
 	fmt.Printf("Added task: %s\n", name)
+}
+
+func deleteTask(tasks *[]Task, id int) {
+	for i, task := range *tasks {
+		if task.ID == id {
+			*tasks = append((*tasks)[:i], (*tasks)[i+1:]...)
+			fmt.Printf("Task %d deleted\n", id)
+			return
+		}
+	}
+
+	fmt.Println("Task not found")
 }
 
 func markAsDone(tasks *[]Task, id int) {
