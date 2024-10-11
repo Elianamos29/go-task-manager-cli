@@ -88,8 +88,16 @@ func markAsDone(tasks *[]Task, id int) {
 }
 
 func saveTasks(tasks []Task) {
-	file, _ := json.MarshalIndent(tasks, "", " ")
-	_ = os.WriteFile(taskFile, file, 0644)
+	file, err := json.MarshalIndent(tasks, "", " ")
+	if err != nil {
+		fmt.Println("Error marshaling tasks:", err)
+		return
+	}
+	err = os.WriteFile(taskFile, file, 0644)
+	if err != nil {
+		fmt.Println("Error writing to a file:", err)
+		return
+	}
 }
 
 func loadTasks() []Task {
@@ -97,9 +105,19 @@ func loadTasks() []Task {
 		return []Task{}
 	}
 
-	file, _ := os.ReadFile(taskFile)
+	file, err := os.ReadFile(taskFile)
+	if err != nil {
+		fmt.Println("Error reading from a file:", err)
+		return []Task{}
+	}
+
 	var tasks []Task
-	_ = json.Unmarshal(file, &tasks)
+	err = json.Unmarshal(file, &tasks)
+	if err != nil {
+		fmt.Println("Error marshaling tasks:", err)
+		return []Task{}
+	}
+
 	return tasks
 }
 
