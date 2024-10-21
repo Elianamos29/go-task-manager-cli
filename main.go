@@ -10,6 +10,7 @@ import (
 )
 
 var taskFile = "tasks.json"
+var maxID int
 
 func main() {
 	tasks := loadTasks()
@@ -61,7 +62,7 @@ func main() {
 }
 
 func addTask(tasks *[]Task, name string, priority string) {
-	newID := len(*tasks) + 1
+	maxID++
 
 	var taskPriority Priority
 
@@ -77,7 +78,7 @@ func addTask(tasks *[]Task, name string, priority string) {
 		taskPriority = Medium
 	}
 
-	*tasks = append(*tasks, Task{ID: newID, Name: name, Done: false, Priority: taskPriority})
+	*tasks = append(*tasks, Task{ID: maxID, Name: name, Done: false, Priority: taskPriority})
 	fmt.Printf("Added task: %s (Priority: %s)\n", name, taskPriority)
 }
 
@@ -134,6 +135,12 @@ func loadTasks() []Task {
 	if err != nil {
 		fmt.Println("Error marshaling tasks:", err)
 		return []Task{}
+	}
+
+	for _, task := range tasks {
+		if task.ID > maxID {
+			maxID = task.ID
+		}
 	}
 
 	return tasks

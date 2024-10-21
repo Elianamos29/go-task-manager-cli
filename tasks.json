@@ -8,25 +8,25 @@
  {
   "id": 2,
   "name": "nothing",
-  "done": false,
-  "priority": ""
- },
- {
-  "id": 3,
-  "name": "a new one",
   "done": true,
   "priority": ""
- },
- {
-  "id": 5,
-  "name": "doing something",
-  "done": false,
-  "priority": "medium"
  },
  {
   "id": 5,
   "name": "have hair cut",
   "done": false,
   "priority": "low"
+ },
+ {
+  "id": 6,
+  "name": "work on a project",
+  "done": false,
+  "priority": "high"
+ },
+ {
+  "id": 7,
+  "name": "start a new project",
+  "done": false,
+  "priority": "medium"
  }
 ]
