@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -47,6 +48,7 @@ func main() {
 	}
 
 	fmt.Println("Your tasks:")
+	sortTaskByPriority(&tasks)
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
 	} else if *showCompleted {
@@ -135,6 +137,13 @@ func loadTasks() []Task {
 	}
 
 	return tasks
+}
+
+func sortTaskByPriority(tasks *[]Task) {
+	sort.Slice(*tasks, func(i, j int) bool {
+		priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
+		return priorities[(*tasks)[i].Priority] > priorities[(*tasks)[j].Priority]
+	})
 }
 
 func displayTasks(tasks []Task, filter *bool) {
