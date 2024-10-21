@@ -14,6 +14,7 @@ func main() {
 	tasks := loadTasks()
 
 	newTask := flag.String("add", "", "add a task")
+	taskPriority := flag.String("priority", "medium", "Set task priority: low, medium, high")
 	deleteTaskID := flag.String("delete", "", "delete a task")
 	doneTaskID := flag.String("done", "", "mark task as done")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
@@ -21,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	if *newTask != "" {
-		addTask(&tasks, *newTask)
+		addTask(&tasks, *newTask, *taskPriority)
 		saveTasks(tasks)
 	}
 
@@ -57,10 +58,25 @@ func main() {
 	}
 }
 
-func addTask(tasks *[]Task, name string) {
+func addTask(tasks *[]Task, name string, priority string) {
 	newID := len(*tasks) + 1
-	*tasks = append(*tasks, Task{ID: newID, Name: name, Done: false})
-	fmt.Printf("Added task: %s\n", name)
+
+	var taskPriority Priority
+
+	switch priority {
+	case "low":
+		taskPriority = Low
+	case "medium":
+		taskPriority = Medium
+	case "high":
+		taskPriority = High
+	default:
+		fmt.Println("Invalid priority! defaulting to 'medium'")
+		taskPriority = Medium
+	}
+
+	*tasks = append(*tasks, Task{ID: newID, Name: name, Done: false, Priority: taskPriority})
+	fmt.Printf("Added task: %s (Priority: %s)\n", name, taskPriority)
 }
 
 func deleteTask(tasks *[]Task, id int) {
@@ -136,6 +152,6 @@ func displayTasks(tasks []Task, filter *bool) {
 			status = "Done"
 		}
 
-		fmt.Printf("%d. %s [%s]\n", task.ID, task.Name, status)
+		fmt.Printf("%d. %s [%s] (Priority: %s)\n", task.ID, task.Name, status, task.Priority)
 	}
 }

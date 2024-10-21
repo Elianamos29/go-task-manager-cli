@@ -2,16 +2,31 @@
  {
   "id": 1,
   "name": "new task",
-  "done": true
+  "done": true,
+  "priority": ""
  },
  {
   "id": 2,
   "name": "nothing",
-  "done": false
+  "done": false,
+  "priority": ""
  },
  {
   "id": 3,
   "name": "a new one",
-  "done": true
+  "done": true,
+  "priority": ""
+ },
+ {
+  "id": 5,
+  "name": "doing something",
+  "done": false,
+  "priority": "medium"
+ },
+ {
+  "id": 5,
+  "name": "have hair cut",
+  "done": false,
+  "priority": "low"
  }
 ]
