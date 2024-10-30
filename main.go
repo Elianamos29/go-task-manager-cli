@@ -51,8 +51,7 @@ func main() {
 	}
 
 	fmt.Println("Your tasks:")
-	sortTaskByPriority(&tasks)
-	sortTaskByDueDate(&tasks)
+	sortTasks(&tasks, "due")
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
 	} else if *showCompleted {
@@ -167,14 +166,13 @@ func loadTasks() []Task {
 }
 
 func sortTaskByPriority(tasks *[]Task) {
-	sort.Slice(*tasks, func(i, j int) bool {
-		priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
-		return priorities[(*tasks)[i].Priority] > priorities[(*tasks)[j].Priority]
-	})
-}
+	priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
 
-func sortTaskByDueDate(tasks *[]Task) {
 	sort.Slice(*tasks, func(i, j int) bool {
+		if priorities[(*tasks)[i].Priority] != priorities[(*tasks)[j].Priority] {
+			return priorities[(*tasks)[i].Priority] > priorities[(*tasks)[j].Priority]
+		}
+
 		if (*tasks)[i].DueDate.IsZero() {
 			return false
 		}
@@ -185,6 +183,36 @@ func sortTaskByDueDate(tasks *[]Task) {
 
 		return (*tasks)[i].DueDate.Before((*tasks)[j].DueDate)
 	})
+}
+
+func sortTaskByDueDate(tasks *[]Task) {
+	sort.Slice(*tasks, func(i, j int) bool {
+		if !(*tasks)[i].DueDate.Equal((*tasks)[j].DueDate) {
+			if (*tasks)[i].DueDate.IsZero() {
+				return false
+			}
+	
+			if (*tasks)[j].DueDate.IsZero() {
+				return true
+			}
+	
+			return (*tasks)[i].DueDate.Before((*tasks)[j].DueDate)
+		}
+
+		return (*tasks)[i].Priority > (*tasks)[j].Priority
+	})
+}
+
+func sortTasks(tasks *[]Task, sortBy string) {
+	switch sortBy {
+	case "priority":
+		sortTaskByPriority(tasks)
+	case "due":
+		sortTaskByDueDate(tasks)
+	default:
+		fmt.Println("Invalid sort option! defaulting to sort by due date")
+		sortTaskByDueDate(tasks)
+	}
 }
 
 func displayTasks(tasks []Task, filter *bool) {
