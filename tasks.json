@@ -3,30 +3,49 @@
   "id": 1,
   "name": "new task",
   "done": true,
-  "priority": ""
+  "priority": "",
+  "due_date": "0001-01-01T00:00:00Z"
  },
  {
   "id": 2,
   "name": "nothing",
   "done": true,
-  "priority": ""
+  "priority": "",
+  "due_date": "0001-01-01T00:00:00Z"
  },
  {
   "id": 5,
   "name": "have hair cut",
   "done": false,
-  "priority": "low"
+  "priority": "low",
+  "due_date": "0001-01-01T00:00:00Z"
  },
  {
   "id": 6,
   "name": "work on a project",
   "done": false,
-  "priority": "high"
+  "priority": "high",
+  "due_date": "0001-01-01T00:00:00Z"
  },
  {
   "id": 7,
   "name": "start a new project",
   "done": false,
-  "priority": "medium"
+  "priority": "medium",
+  "due_date": "0001-01-01T00:00:00Z"
+ },
+ {
+  "id": 8,
+  "name": "test task",
+  "done": false,
+  "priority": "medium",
+  "due_date": "0001-01-01T00:00:00Z"
+ },
+ {
+  "id": 9,
+  "name": "test task 2",
+  "done": false,
+  "priority": "medium",
+  "due_date": "2024-10-31T00:00:00Z"
  }
 ]

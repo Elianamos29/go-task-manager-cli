@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"time"
 )
 
 var taskFile = "tasks.json"
@@ -18,13 +19,14 @@ func main() {
 	newTask := flag.String("add", "", "add a task")
 	taskPriority := flag.String("priority", "medium", "Set task priority: low, medium, high")
 	deleteTaskID := flag.String("delete", "", "delete a task")
+	dueDate := flag.String("due", "", "set due date for the task(YYYY-MM-DD)")
 	doneTaskID := flag.String("done", "", "mark task as done")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
 	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
 	flag.Parse()
 
 	if *newTask != "" {
-		addTask(&tasks, *newTask, *taskPriority)
+		addTask(&tasks, *newTask, *taskPriority, *dueDate)
 		saveTasks(tasks)
 	}
 
@@ -50,6 +52,7 @@ func main() {
 
 	fmt.Println("Your tasks:")
 	sortTaskByPriority(&tasks)
+	sortTaskByDueDate(&tasks)
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
 	} else if *showCompleted {
@@ -61,7 +64,7 @@ func main() {
 	}
 }
 
-func addTask(tasks *[]Task, name string, priority string) {
+func addTask(tasks *[]Task, name string, priority string, due string) {
 	maxID++
 
 	var taskPriority Priority
@@ -78,8 +81,25 @@ func addTask(tasks *[]Task, name string, priority string) {
 		taskPriority = Medium
 	}
 
-	*tasks = append(*tasks, Task{ID: maxID, Name: name, Done: false, Priority: taskPriority})
-	fmt.Printf("Added task: %s (Priority: %s)\n", name, taskPriority)
+	var taskDueDate time.Time
+	if due != "" {
+		parseDueDate, err := time.Parse("2006-01-02", due)
+		if err != nil {
+			fmt.Println("Invalid due date format! Please use YYYY-MM-DD")
+			return
+		}
+
+		taskDueDate = parseDueDate
+	}
+
+	*tasks = append(*tasks, Task{
+		ID: maxID,
+		Name: name,
+		Done: false,
+		Priority: taskPriority,
+		DueDate: taskDueDate,
+	})
+	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, taskPriority, taskDueDate.Format("2006-01-02"))
 }
 
 func deleteTask(tasks *[]Task, id int) {
@@ -153,6 +173,20 @@ func sortTaskByPriority(tasks *[]Task) {
 	})
 }
 
+func sortTaskByDueDate(tasks *[]Task) {
+	sort.Slice(*tasks, func(i, j int) bool {
+		if (*tasks)[i].DueDate.IsZero() {
+			return false
+		}
+
+		if (*tasks)[j].DueDate.IsZero() {
+			return true
+		}
+
+		return (*tasks)[i].DueDate.Before((*tasks)[j].DueDate)
+	})
+}
+
 func displayTasks(tasks []Task, filter *bool) {
 	for _, task := range tasks {
 		if filter != nil {
@@ -168,6 +202,11 @@ func displayTasks(tasks []Task, filter *bool) {
 			status = "Done"
 		}
 
-		fmt.Printf("%d. %s [%s] (Priority: %s)\n", task.ID, task.Name, status, task.Priority)
+		due := "No due date"
+		if !task.DueDate.IsZero() {
+			due = task.DueDate.Format("2006-01-02")
+		}
+
+		fmt.Printf("%d. %s [%s] (Priority: %s, Due: %s)\n", task.ID, task.Name, status, task.Priority, due)
 	}
 }

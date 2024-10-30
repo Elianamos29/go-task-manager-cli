@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type Priority string
 
 const (
@@ -13,4 +15,5 @@ type Task struct {
 	Name string `json:"name"`
 	Done bool `json:"done"`
 	Priority Priority `json:"priority"`
+	DueDate time.Time `json:"due_date"`
 }
