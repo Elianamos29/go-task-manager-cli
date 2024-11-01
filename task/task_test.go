@@ -1,6 +1,7 @@
 package task
 
 import (
+	"os"
 	"testing"
 	"time"
 )
@@ -54,5 +55,26 @@ func TestMarkAsDone(t *testing.T) {
 
 	if !tasks[0].Done {
 		t.Errorf("Expected task to be mark as done")
+	}
+}
+
+func TestSaveAndLoadTasks(t *testing.T) {
+	testFile := "test_tasks.json"
+	defer os.Remove(testFile)
+
+	tasks := []Task{
+		{ID: 1, Name: "task 1"},
+		{ID: 2, Name: "task 2", Done: true},
+	}
+
+	SaveTasks(testFile, tasks)
+	loadedTasks := LoadTasks(testFile)
+
+	if len(loadedTasks) != 2 {
+		t.Errorf("Expected 2 tasks, got %d", len(loadedTasks))
+	}
+
+	if loadedTasks[1].Name != "task 2" || !loadedTasks[1].Done {
+		t.Error("Loaded task doesn't match saved task")
 	}
 }
