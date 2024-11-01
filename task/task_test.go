@@ -45,3 +45,14 @@ func TestDeleteTask(t *testing.T) {
 		t.Errorf("Expected remaining task with ID 2, got %d", tasks[0].ID)
 	}
 }
+
+func TestMarkAsDone(t *testing.T) {
+	tasks := []Task{
+		{ID: 1, Name: "task 1", Done: false},
+	}
+	MarkAsDone(&tasks, 1)
+
+	if !tasks[0].Done {
+		t.Errorf("Expected task to be mark as done")
+	}
+}
