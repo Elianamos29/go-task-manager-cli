@@ -3,10 +3,15 @@ package task
 import (
 	"encoding/json"
 	"fmt"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"log"
 	"os"
 	"sort"
 	"time"
 )
+
+var DB *gorm.DB
 
 var maxID int
 type Priority string
@@ -23,6 +28,16 @@ type Task struct {
 	Done bool `json:"done"`
 	Priority Priority `json:"priority"`
 	DueDate time.Time `json:"due_date"`
+}
+
+func initDB(dbName string) {
+	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	db.AutoMigrate(&Task{})
+	DB = db
 }
 
 func AddTask(tasks *[]Task, name string, priority string, due string) {
