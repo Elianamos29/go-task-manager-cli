@@ -1,12 +1,10 @@
 package task
 
 import (
-	"encoding/json"
 	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
-	"os"
 	"sort"
 	"time"
 )
@@ -30,7 +28,7 @@ type Task struct {
 	DueDate time.Time `json:"due_date"`
 }
 
-func initDB(dbName string) {
+func InitDB(dbName string) {
 	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
@@ -40,7 +38,7 @@ func initDB(dbName string) {
 	DB = db
 }
 
-func AddTask(tasks *[]Task, name string, priority Priority, due time.Time) {
+func AddTask(name string, priority Priority, due time.Time) {
 	task := Task{Name: name, Done: false, Priority: priority, DueDate: due}
 	DB.Create(&task)
 	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, priority, due.Format("2006-01-02"))
@@ -112,6 +110,12 @@ func SortTasks(tasks *[]Task, sortBy string) {
 		fmt.Println("Invalid sort option! defaulting to sort by due date")
 		sortTaskByDueDate(tasks)
 	}
+}
+
+func LoadTasks() []Task {
+	var tasks []Task
+	DB.Find(&tasks)
+	return tasks
 }
 
 func DisplayTasks(tasks []Task, filter *bool) {

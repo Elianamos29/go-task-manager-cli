@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/Elianamos29/go-task-manager-cli/task"
 )
@@ -11,7 +12,7 @@ import (
 var taskFile = "tasks.json"
 
 func main() {
-	tasks := task.LoadTasks(taskFile)
+	task.InitDB("tasks.db")
 
 	newTask := flag.String("add", "", "add a task")
 	taskPriority := flag.String("priority", "medium", "Set task priority: low, medium, high")
@@ -24,8 +25,16 @@ func main() {
 	flag.Parse()
 
 	if *newTask != "" {
-		task.AddTask(&tasks, *newTask, *taskPriority, *dueDate)
-		task.SaveTasks(taskFile, tasks)
+		var due time.Time
+		if *dueDate != "" {
+			parsedDue, err := time.Parse("2006-01-02", *dueDate)
+			if err != nil {
+				fmt.Println("Invalid due date format! Please use YYYY-MM-DD")
+			} else {
+				due = parsedDue
+			}
+		}
+		task.AddTask(*newTask, task.Priority(*taskPriority), due)
 	}
 
 	if *doneTaskID != "" {
@@ -33,8 +42,7 @@ func main() {
 		if err != nil {
 			fmt.Println("invalid task ID:", *doneTaskID)
 		} else {
-			task.MarkAsDone(&tasks, id)
-			task.SaveTasks(taskFile, tasks)
+			task.MarkAsDone(id)
 		}
 	}
 
@@ -43,12 +51,12 @@ func main() {
 		if err != nil {
 			fmt.Println("invalid task ID:", *deleteTaskID)
 		} else {
-			task.DeleteTask(&tasks, id)
-			task.SaveTasks(taskFile, tasks)
+			task.DeleteTask(id)
 		}
 	}
 
 	fmt.Println("Your tasks:")
+	tasks := task.LoadTasks()
 	task.SortTasks(&tasks, *sortBy)
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
