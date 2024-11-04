@@ -40,54 +40,19 @@ func initDB(dbName string) {
 	DB = db
 }
 
-func AddTask(tasks *[]Task, name string, priority string, due string) {
-	maxID++
-
-	var taskPriority Priority
-
-	switch priority {
-	case "low":
-		taskPriority = Low
-	case "medium":
-		taskPriority = Medium
-	case "high":
-		taskPriority = High
-	default:
-		fmt.Println("Invalid priority! defaulting to 'medium'")
-		taskPriority = Medium
-	}
-
-	var taskDueDate time.Time
-	if due != "" {
-		parseDueDate, err := time.Parse("2006-01-02", due)
-		if err != nil {
-			fmt.Println("Invalid due date format! Please use YYYY-MM-DD")
-			return
-		}
-
-		taskDueDate = parseDueDate
-	}
-
-	*tasks = append(*tasks, Task{
-		ID: maxID,
-		Name: name,
-		Done: false,
-		Priority: taskPriority,
-		DueDate: taskDueDate,
-	})
-	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, taskPriority, taskDueDate.Format("2006-01-02"))
+func AddTask(tasks *[]Task, name string, priority Priority, due time.Time) {
+	task := Task{Name: name, Done: false, Priority: priority, DueDate: due}
+	DB.Create(&task)
+	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, priority, due.Format("2006-01-02"))
 }
 
-func DeleteTask(tasks *[]Task, id int) {
-	for i, task := range *tasks {
-		if task.ID == id {
-			*tasks = append((*tasks)[:i], (*tasks)[i+1:]...)
-			fmt.Printf("Task %d deleted\n", id)
-			return
-		}
+func DeleteTask(id int) {
+	result := DB.Delete(&Task{}, id)
+	if result.RowsAffected == 0 {
+		fmt.Println("Task not found")
+	} else {
+		fmt.Printf("Task %d deleted", id)
 	}
-
-	fmt.Println("Task not found")
 }
 
 func MarkAsDone(tasks *[]Task, id int) {
@@ -116,29 +81,8 @@ func SaveTasks(taskFile string, tasks []Task) {
 }
 
 func LoadTasks(taskFile string) []Task {
-	if _, err := os.Stat(taskFile); os.IsNotExist(err) {
-		return []Task{}
-	}
-
-	file, err := os.ReadFile(taskFile)
-	if err != nil {
-		fmt.Println("Error reading from a file:", err)
-		return []Task{}
-	}
-
 	var tasks []Task
-	err = json.Unmarshal(file, &tasks)
-	if err != nil {
-		fmt.Println("Error marshaling tasks:", err)
-		return []Task{}
-	}
-
-	for _, task := range tasks {
-		if task.ID > maxID {
-			maxID = task.ID
-		}
-	}
-
+	DB.Find(&tasks)
 	return tasks
 }
 
