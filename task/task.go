@@ -64,25 +64,6 @@ func MarkAsDone(id int) {
 	}
 }
 
-func SaveTasks(taskFile string, tasks []Task) {
-	file, err := json.MarshalIndent(tasks, "", " ")
-	if err != nil {
-		fmt.Println("Error marshaling tasks:", err)
-		return
-	}
-	err = os.WriteFile(taskFile, file, 0644)
-	if err != nil {
-		fmt.Println("Error writing to a file:", err)
-		return
-	}
-}
-
-func LoadTasks(taskFile string) []Task {
-	var tasks []Task
-	DB.Find(&tasks)
-	return tasks
-}
-
 func sortTaskByPriority(tasks *[]Task) {
 	priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
 
