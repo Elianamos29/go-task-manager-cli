@@ -55,16 +55,13 @@ func DeleteTask(id int) {
 	}
 }
 
-func MarkAsDone(tasks *[]Task, id int) {
-	for i, task := range *tasks {
-		if task.ID == id {
-			(*tasks)[i].Done = true
-			fmt.Printf("Task %d marked as done\n", id)
-			return
-		}
+func MarkAsDone(id int) {
+	result := DB.Model(&Task{}).Where("id = ?", id).Update("done", true)
+	if result.RowsAffected == 0 {
+		fmt.Println("Task not found")
+	} else {
+		fmt.Printf("Task %d marked as done", id)
 	}
-
-	fmt.Println("Task not found")
 }
 
 func SaveTasks(taskFile string, tasks []Task) {
