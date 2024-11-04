@@ -18,7 +18,7 @@ const (
 )
 
 type Task struct {
-	ID int `json:"id"`
+	ID int `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name string `json:"name"`
 	Done bool `json:"done"`
 	Priority Priority `json:"priority"`
