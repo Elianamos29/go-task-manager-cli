@@ -55,26 +55,20 @@ func TestMarkAsDone(t *testing.T) {
 	}
 }
 
-// func TestSaveAndLoadTasks(t *testing.T) {
-// 	testFile := "test_tasks.json"
-// 	defer os.Remove(testFile)
+func TestLoadTasks(t *testing.T) {
+	setupTestDB()
 
-// 	tasks := []Task{
-// 		{ID: 1, Name: "task 1"},
-// 		{ID: 2, Name: "task 2", Done: true},
-// 	}
+	task1 := CreateTask("Task 1", Low, time.Now())
+	task2 := CreateTask("Task 2", High, time.Now())
+	DB.Create(&task1)
+	DB.Create(&task2)
 
-// 	SaveTasks(testFile, tasks)
-// 	loadedTasks := LoadTasks(testFile)
+	tasks := LoadTasks()
 
-// 	if len(loadedTasks) != 2 {
-// 		t.Errorf("Expected 2 tasks, got %d", len(loadedTasks))
-// 	}
-
-// 	if loadedTasks[1].Name != "task 2" || !loadedTasks[1].Done {
-// 		t.Error("Loaded task doesn't match saved task")
-// 	}
-// }
+	if len(tasks) != 2 {
+		t.Errorf("Expected 2 tasks, got %d", len(tasks))
+	}
+}
 
 // func TestSortTasks(t *testing.T) {
 // 	dueDate1, _ := time.Parse("2006-01-02", "2024-11-10")
