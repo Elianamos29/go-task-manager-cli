@@ -3,7 +3,16 @@ package task
 import (
 	"fmt"
 	"sort"
+	"time"
 )
+
+func CreateTask(name string, priority Priority, dueDate time.Time) Task {
+	return Task{
+		Name: name,
+		Priority: priority,
+		DueDate: dueDate,
+	}
+}
 
 func sortTaskByPriority(tasks *[]Task) {
 	priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
