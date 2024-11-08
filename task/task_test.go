@@ -27,22 +27,18 @@ func TestAddTask(t *testing.T) {
 	}
 }
 
-// func TestDeleteTask(t *testing.T) {
-// 	tasks := []Task{
-// 		{ID: 1, Name: "task 1"},
-// 		{ID: 2, Name: "task 2"},
-// 	}
+func TestDeleteTask(t *testing.T) {
+	setupTestDB()
 
-// 	DeleteTask(&tasks, 1)
+	task := CreateTask("to be deleted", Low, time.Now())
+	DB.Create(&task)
+	DeleteTask(task.ID)
 
-// 	if len(tasks) != 1 {
-// 		t.Errorf("Expected 1 task after deletion, got %d", len(tasks))
-// 	}
-
-// 	if tasks[0].ID != 2 {
-// 		t.Errorf("Expected remaining task with ID 2, got %d", tasks[0].ID)
-// 	}
-// }
+	var result Task
+	if err := DB.First(&result, task.ID); err == nil {
+		t.Fatal("Expected task to be deleted but still exists")
+	}
+}
 
 // func TestMarkAsDone(t *testing.T) {
 // 	tasks := []Task{
