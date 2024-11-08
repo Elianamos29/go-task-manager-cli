@@ -2,10 +2,12 @@ package task
 
 import (
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
-	"time"
 )
 
 var DB *gorm.DB
@@ -37,6 +39,8 @@ func InitDB(dbName string) {
 }
 
 func AddTask(name string, priority Priority, due time.Time) {
+	priority = Priority(strings.ToLower(string(priority)))
+
 	task := CreateTask(name, priority, due)
 	DB.Create(&task)
 	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, priority, due.Format("2006-01-02"))
