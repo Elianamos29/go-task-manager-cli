@@ -2,65 +2,8 @@ package task
 
 import (
 	"fmt"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"log"
 	"sort"
-	"time"
 )
-
-var DB *gorm.DB
-
-var maxID int
-type Priority string
-
-const (
-	Low Priority = "low"
-	Medium Priority = "medium"
-	High Priority = "high"
-)
-
-type Task struct {
-	ID int `json:"id" gorm:"primaryKey;autoIncrement"`
-	Name string `json:"name"`
-	Done bool `json:"done"`
-	Priority Priority `json:"priority"`
-	DueDate time.Time `json:"due_date"`
-}
-
-func InitDB(dbName string) {
-	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
-	}
-
-	db.AutoMigrate(&Task{})
-	DB = db
-}
-
-func AddTask(name string, priority Priority, due time.Time) {
-	task := Task{Name: name, Done: false, Priority: priority, DueDate: due}
-	DB.Create(&task)
-	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, priority, due.Format("2006-01-02"))
-}
-
-func DeleteTask(id int) {
-	result := DB.Delete(&Task{}, id)
-	if result.RowsAffected == 0 {
-		fmt.Println("Task not found")
-	} else {
-		fmt.Printf("Task %d deleted", id)
-	}
-}
-
-func MarkAsDone(id int) {
-	result := DB.Model(&Task{}).Where("id = ?", id).Update("done", true)
-	if result.RowsAffected == 0 {
-		fmt.Println("Task not found")
-	} else {
-		fmt.Printf("Task %d marked as done", id)
-	}
-}
 
 func sortTaskByPriority(tasks *[]Task) {
 	priorities := map[Priority]int{High: 3, Medium: 2, Low: 1}
@@ -110,12 +53,6 @@ func SortTasks(tasks *[]Task, sortBy string) {
 		fmt.Println("Invalid sort option! defaulting to sort by due date")
 		sortTaskByDueDate(tasks)
 	}
-}
-
-func LoadTasks() []Task {
-	var tasks []Task
-	DB.Find(&tasks)
-	return tasks
 }
 
 func DisplayTasks(tasks []Task, filter *bool) {
