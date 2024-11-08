@@ -40,16 +40,20 @@ func TestDeleteTask(t *testing.T) {
 	}
 }
 
-// func TestMarkAsDone(t *testing.T) {
-// 	tasks := []Task{
-// 		{ID: 1, Name: "task 1", Done: false},
-// 	}
-// 	MarkAsDone(&tasks, 1)
+func TestMarkAsDone(t *testing.T) {
+	setupTestDB()
 
-// 	if !tasks[0].Done {
-// 		t.Errorf("Expected task to be mark as done")
-// 	}
-// }
+	task := CreateTask("Task done", Medium, time.Now())
+	DB.Create(&task)
+	MarkAsDone(task.ID)
+
+	var result Task
+	DB.First(&result, task.ID)
+
+	if !result.Done {
+		t.Errorf("Expected task to be mark as done")
+	}
+}
 
 // func TestSaveAndLoadTasks(t *testing.T) {
 // 	testFile := "test_tasks.json"
