@@ -4,7 +4,19 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
+
+func setupTestDB() {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect to test database")
+	}
+	db.AutoMigrate(&Task{})
+	DB = db
+}
 
 func TestAddTask(t *testing.T) {
 	tasks := []Task{}
