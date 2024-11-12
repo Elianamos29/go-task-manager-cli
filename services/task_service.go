@@ -102,7 +102,7 @@ func SortTasks(tasks *[]models.Task, sortBy string) {
 
 func FilterTasksByPriority(tasks []models.Task, priority models.Priority) []models.Task {
 	priority = models.Priority(strings.ToLower(string(priority)))
-	
+
 	var filteredTasks []models.Task
 	for _, task := range tasks {
 		if task.Priority == priority {
@@ -111,4 +111,17 @@ func FilterTasksByPriority(tasks []models.Task, priority models.Priority) []mode
 	}
 
 	return filteredTasks
+}
+
+func SearchTaskByName(tasks []models.Task, keyword string) []models.Task {
+	keyword = strings.ToLower(keyword)
+
+	var results []models.Task
+	for _, task := range tasks {
+		if strings.Contains(strings.ToLower(task.Name), keyword) {
+			results = append(results, task)
+		}
+	}
+
+	return results
 }

@@ -22,6 +22,7 @@ func main() {
 	dueDate := flag.String("due", "", "set due date for the task(YYYY-MM-DD)")
 	doneTaskID := flag.String("done", "", "mark task as done")
 	priority := flag.String("filter", "", "filter tasks by priority")
+	keyword := flag.String("search", "", "search tasks by name")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
 	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
 	flag.Parse()
@@ -61,6 +62,10 @@ func main() {
 	tasks := services.LoadTasks()
 	if *priority != "" {
 		tasks = services.FilterTasksByPriority(tasks, models.Priority(*priority))
+	}
+
+	if *keyword != "" {
+		tasks = services.SearchTaskByName(tasks, *keyword)
 	}
 
 	services.SortTasks(&tasks, *sortBy)
