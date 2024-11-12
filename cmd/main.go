@@ -21,6 +21,7 @@ func main() {
 	deleteTaskID := flag.String("delete", "", "delete a task")
 	dueDate := flag.String("due", "", "set due date for the task(YYYY-MM-DD)")
 	doneTaskID := flag.String("done", "", "mark task as done")
+	priority := flag.String("filter", "", "filter tasks by priority")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
 	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
 	flag.Parse()
@@ -58,6 +59,10 @@ func main() {
 
 	fmt.Println("Your tasks:")
 	tasks := services.LoadTasks()
+	if *priority != "" {
+		tasks = services.FilterTasksByPriority(tasks, models.Priority(*priority))
+	}
+
 	services.SortTasks(&tasks, *sortBy)
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")

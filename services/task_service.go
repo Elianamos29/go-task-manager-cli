@@ -32,7 +32,7 @@ func MarkAsDone(id int) {
 	if result.RowsAffected == 0 {
 		fmt.Println("Task not found")
 	} else {
-		fmt.Printf("Task %d marked as done", id)
+		fmt.Printf("Task %d marked as done\n", id)
 	}
 }
 
@@ -98,4 +98,17 @@ func SortTasks(tasks *[]models.Task, sortBy string) {
 		fmt.Println("Invalid sort option! defaulting to sort by due date")
 		sortTaskByDueDate(tasks)
 	}
+}
+
+func FilterTasksByPriority(tasks []models.Task, priority models.Priority) []models.Task {
+	priority = models.Priority(strings.ToLower(string(priority)))
+	
+	var filteredTasks []models.Task
+	for _, task := range tasks {
+		if task.Priority == priority {
+			filteredTasks = append(filteredTasks, task)
+		}
+	}
+
+	return filteredTasks
 }
