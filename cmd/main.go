@@ -6,13 +6,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Elianamos29/go-task-manager-cli/task"
+	"github.com/Elianamos29/go-task-manager-cli/db"
+	"github.com/Elianamos29/go-task-manager-cli/models"
+	"github.com/Elianamos29/go-task-manager-cli/services"
+	"github.com/Elianamos29/go-task-manager-cli/views"
 )
 
-var taskFile = "tasks.json"
-
 func main() {
-	task.InitDB("tasks.db")
+	db.InitDB("tasks.db")
 
 	newTask := flag.String("add", "", "add a task")
 	taskPriority := flag.String("priority", "medium", "Set task priority: low, medium, high")
@@ -34,7 +35,7 @@ func main() {
 				due = parsedDue
 			}
 		}
-		task.AddTask(*newTask, task.Priority(*taskPriority), due)
+		services.AddTask(*newTask, models.Priority(*taskPriority), due)
 	}
 
 	if *doneTaskID != "" {
@@ -42,7 +43,7 @@ func main() {
 		if err != nil {
 			fmt.Println("invalid task ID:", *doneTaskID)
 		} else {
-			task.MarkAsDone(id)
+			services.MarkAsDone(id)
 		}
 	}
 
@@ -51,20 +52,20 @@ func main() {
 		if err != nil {
 			fmt.Println("invalid task ID:", *deleteTaskID)
 		} else {
-			task.DeleteTask(id)
+			services.DeleteTask(id)
 		}
 	}
 
 	fmt.Println("Your tasks:")
-	tasks := task.LoadTasks()
-	task.SortTasks(&tasks, *sortBy)
+	tasks := services.LoadTasks()
+	services.SortTasks(&tasks, *sortBy)
 	if *showCompleted && *showIncomplete {
 		fmt.Println("Please specify only one filter: --completed or --incomplete.")
 	} else if *showCompleted {
-		task.DisplayTasks(tasks, &[]bool{true}[0])
+		views.DisplayTasks(tasks, &[]bool{true}[0])
 	} else if *showIncomplete {
-		task.DisplayTasks(tasks, &[]bool{false}[0])
+		views.DisplayTasks(tasks, &[]bool{false}[0])
 	} else {
-		task.DisplayTasks(tasks, nil)
+		views.DisplayTasks(tasks, nil)
 	}
 }

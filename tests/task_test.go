@@ -4,25 +4,29 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Elianamos29/go-task-manager-cli/models"
+	"github.com/Elianamos29/go-task-manager-cli/db"
+	"github.com/Elianamos29/go-task-manager-cli/services"
+	
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func setupTestDB() {
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	testdb, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect to test database")
 	}
-	db.AutoMigrate(&Task{})
-	DB = db
+	testdb.AutoMigrate(&models.Task{})
+	db.DB = testdb
 }
 
 func TestAddTask(t *testing.T) {
 	setupTestDB()
 
-	AddTask("Test task", High, time.Now())
-	var task Task
-	if err := DB.First(&task).Error; err != nil {
+	services.AddTask("Test task", models.High, time.Now())
+	var task models.Task
+	if err := db.DB.First(&task).Error; err != nil {
 		t.Fatalf("Expected task to be created, got error: %v", err)
 	}
 }
@@ -30,12 +34,12 @@ func TestAddTask(t *testing.T) {
 func TestDeleteTask(t *testing.T) {
 	setupTestDB()
 
-	task := CreateTask("to be deleted", Low, time.Now())
-	DB.Create(&task)
-	DeleteTask(task.ID)
+	task := services.CreateTask("to be deleted", models.Low, time.Now())
+	db.DB.Create(&task)
+	services.DeleteTask(task.ID)
 
-	var result Task
-	if err := DB.First(&result, task.ID); err == nil {
+	var result models.Task
+	if err := db.DB.First(&result, task.ID); err == nil {
 		t.Fatal("Expected task to be deleted but still exists")
 	}
 }
@@ -43,12 +47,12 @@ func TestDeleteTask(t *testing.T) {
 func TestMarkAsDone(t *testing.T) {
 	setupTestDB()
 
-	task := CreateTask("Task done", Medium, time.Now())
-	DB.Create(&task)
-	MarkAsDone(task.ID)
+	task := services.CreateTask("Task done", models.Medium, time.Now())
+	db.DB.Create(&task)
+	services.MarkAsDone(task.ID)
 
-	var result Task
-	DB.First(&result, task.ID)
+	var result models.Task
+	db.DB.First(&result, task.ID)
 
 	if !result.Done {
 		t.Errorf("Expected task to be mark as done")
@@ -58,12 +62,12 @@ func TestMarkAsDone(t *testing.T) {
 func TestLoadTasks(t *testing.T) {
 	setupTestDB()
 
-	task1 := CreateTask("Task 1", Low, time.Now())
-	task2 := CreateTask("Task 2", High, time.Now())
-	DB.Create(&task1)
-	DB.Create(&task2)
+	task1 := services.CreateTask("Task 1", models.Low, time.Now())
+	task2 := services.CreateTask("Task 2", models.High, time.Now())
+	db.DB.Create(&task1)
+	db.DB.Create(&task2)
 
-	tasks := LoadTasks()
+	tasks := services.LoadTasks()
 
 	if len(tasks) != 2 {
 		t.Errorf("Expected 2 tasks, got %d", len(tasks))
