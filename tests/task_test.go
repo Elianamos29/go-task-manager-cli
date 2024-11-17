@@ -74,26 +74,26 @@ func TestLoadTasks(t *testing.T) {
 	}
 }
 
-// func TestSortTasks(t *testing.T) {
-// 	dueDate1, _ := time.Parse("2006-01-02", "2024-11-10")
-// 	dueDate2, _ := time.Parse("2006-01-02", "2024-11-11")
-// 	dueDate3, _ := time.Parse("2006-01-02", "2024-11-12")
+func TestSortTasks(t *testing.T) {
+	dueDate1, _ := time.Parse("2006-01-02", "2024-11-10")
+	dueDate2, _ := time.Parse("2006-01-02", "2024-11-11")
+	dueDate3, _ := time.Parse("2006-01-02", "2024-11-12")
 
-// 	tasks := []Task{
-//         {ID: 1, Name: "Low Priority", Priority: Low, DueDate: dueDate1},
-//         {ID: 2, Name: "High Priority", Priority: High, DueDate: dueDate3},
-//         {ID: 3, Name: "Medium Priority", Priority: Medium, DueDate: dueDate2},
-//     }
+	tasks := []models.Task{
+        {ID: 1, Name: "Low Priority", Priority: models.Low, DueDate: dueDate1},
+        {ID: 2, Name: "High Priority", Priority: models.High, DueDate: dueDate3},
+        {ID: 3, Name: "Medium Priority", Priority: models.Medium, DueDate: dueDate2},
+    }
 
-// 	SortTasks(&tasks, "priority")
+	services.SortTasks(&tasks, "priority")
 
-// 	if tasks[0].Priority != High || tasks[1].Priority != Medium || tasks[2].Priority != Low {
-//         t.Errorf("Tasks not sorted by priority correctly")
-//     }
+	if tasks[0].Priority != models.High || tasks[1].Priority != models.Medium || tasks[2].Priority != models.Low {
+        t.Errorf("Tasks not sorted by priority correctly")
+    }
 
-// 	SortTasks(&tasks, "due")
+	services.SortTasks(&tasks, "due")
 
-// 	if tasks[0].ID != 1 || tasks[1].ID != 3 || tasks[2].ID != 2 {
-//         t.Errorf("Tasks not sorted by due date correctly")
-//     }
-// }
+	if tasks[0].ID != 1 || tasks[1].ID != 3 || tasks[2].ID != 2 {
+        t.Errorf("Tasks not sorted by due date correctly")
+    }
+}
