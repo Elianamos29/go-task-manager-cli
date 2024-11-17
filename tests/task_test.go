@@ -24,7 +24,7 @@ func setupTestDB() {
 func TestAddTask(t *testing.T) {
 	setupTestDB()
 
-	services.AddTask("Test task", models.High, time.Now())
+	services.AddTask("Test task", models.High, time.Now(),"test")
 	var task models.Task
 	if err := db.DB.First(&task).Error; err != nil {
 		t.Fatalf("Expected task to be created, got error: %v", err)

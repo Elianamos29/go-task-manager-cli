@@ -91,12 +91,28 @@ func sortTaskByDueDate(tasks *[]models.Task) {
 	})
 }
 
+func sortTaskByTags(tasks *[]models.Task) {
+	sort.Slice(*tasks, func(i, j int) bool {
+		if (*tasks)[i].Tags == "" && (*tasks)[j].Tags != "" {
+			return false
+		}
+
+		if (*tasks)[i].Tags != "" && (*tasks)[j].Tags == "" {
+			return true
+		}
+
+		return (*tasks)[i].Tags < (*tasks)[j].Tags
+	})
+}
+
 func SortTasks(tasks *[]models.Task, sortBy string) {
 	switch sortBy {
 	case "priority":
 		sortTaskByPriority(tasks)
 	case "due":
 		sortTaskByDueDate(tasks)
+	case "tags":
+		sortTaskByTags(tasks)
 	default:
 		fmt.Println("Invalid sort option! defaulting to sort by due date")
 		sortTaskByDueDate(tasks)
