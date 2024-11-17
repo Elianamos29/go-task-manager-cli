@@ -132,6 +132,21 @@ func FilterTasksByPriority(tasks []models.Task, priority models.Priority) []mode
 	return filteredTasks
 }
 
+func FilterTasksByTag(tasks []models.Task, tag string) []models.Task {
+	var filteredTasks []models.Task
+	for _, task := range tasks {
+		tags := strings.Split(task.Tags, ",")
+		for _, t := range tags {
+			if strings.TrimSpace(t) == tag {
+				filteredTasks = append(filteredTasks, task)
+				break
+			}
+		}
+	}
+
+	return filteredTasks
+}
+
 func SearchTaskByName(tasks []models.Task, keyword string) []models.Task {
 	keyword = strings.ToLower(keyword)
 

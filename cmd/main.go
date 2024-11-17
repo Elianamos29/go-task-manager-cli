@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Elianamos29/go-task-manager-cli/db"
@@ -24,6 +25,7 @@ func main() {
 	doneTaskID := flag.String("done", "", "mark task as done")
 	priority := flag.String("filter", "", "filter tasks by priority")
 	keyword := flag.String("search", "", "search tasks by name")
+	tagFilter := flag.String("filter-tag", "", "filter tasks by specific tag")
 	showCompleted := flag.Bool("completed", false, "show completed tasks")
 	showIncomplete := flag.Bool("incomplete", false, "show incomplete tasks")
 	flag.Parse()
@@ -67,6 +69,10 @@ func main() {
 
 	if *keyword != "" {
 		tasks = services.SearchTaskByName(tasks, *keyword)
+	}
+
+	if *tagFilter != "" {
+		tasks = services.FilterTasksByTag(tasks, strings.TrimSpace(*tagFilter))
 	}
 
 	services.SortTasks(&tasks, *sortBy)
