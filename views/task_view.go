@@ -26,6 +26,11 @@ func DisplayTasks(tasks []models.Task, filter *bool) {
 			due = task.DueDate.Format("2006-01-02")
 		}
 
-		fmt.Printf("%d. %s [%s] (Priority: %s, Due: %s)\n", task.ID, task.Name, status, task.Priority, due)
+		tags := "No tags"
+		if task.Tags != "" {
+			tags = task.Tags
+		}
+
+		fmt.Printf("%d. %s [%s] (Priority: %s, Due: %s, Tags: %s)\n", task.ID, task.Name, status, task.Priority, due, tags)
 	}
 }
