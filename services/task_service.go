@@ -10,10 +10,11 @@ import (
 	"github.com/Elianamos29/go-task-manager-cli/models"
 )
 
-func AddTask(name string, priority models.Priority, due time.Time) {
+func AddTask(name string, priority models.Priority, due time.Time, tags string) {
 	priority = models.Priority(strings.ToLower(string(priority)))
 
 	task := CreateTask(name, priority, due)
+	task.Tags = tags
 	db.DB.Create(&task)
 	fmt.Printf("Added task: %s (Priority: %s, Due: %s)\n", name, priority, due.Format("2006-01-02"))
 }
@@ -38,9 +39,11 @@ func MarkAsDone(id int) {
 
 func CreateTask(name string, priority models.Priority, dueDate time.Time) models.Task {
 	return models.Task{
-		Name: name,
-		Priority: priority,
-		DueDate: dueDate,
+		Name:		name,
+		Done:		false,
+		Priority: 	priority,
+		DueDate: 	dueDate,
+		Tags:		"",
 	}
 }
 

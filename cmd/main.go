@@ -17,6 +17,7 @@ func main() {
 
 	newTask := flag.String("add", "", "add a task")
 	taskPriority := flag.String("priority", "medium", "Set task priority: low, medium, high")
+	tags := flag.String("tags", "", "Set tags for the task(comma-separated)")
 	sortBy := flag.String("sort", "due", "sort tasks by: priority, due")
 	deleteTaskID := flag.String("delete", "", "delete a task")
 	dueDate := flag.String("due", "", "set due date for the task(YYYY-MM-DD)")
@@ -37,7 +38,7 @@ func main() {
 				due = parsedDue
 			}
 		}
-		services.AddTask(*newTask, models.Priority(*taskPriority), due)
+		services.AddTask(*newTask, models.Priority(*taskPriority), due, *tags)
 	}
 
 	if *doneTaskID != "" {
